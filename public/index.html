@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auth Demo</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main>
+    <h1>Auth Demo</h1>
+
+    <section class="box">
+      <h2>Register</h2>
+      <form id="registerForm">
+        <input name="name" placeholder="Name"  />
+        <input name="email" placeholder="Email" type="email"  />
+        <input name="password" placeholder="Password" type="password"  />
+        <button>Register</button>
+      </form>
+    </section>
+
+    <section class="box">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input name="email" placeholder="Email" type="email"  />
+        <input name="password" placeholder="Password" type="password"  />
+        <button>Login</button>
+      </form>
+      <div id="loginResult" class="result"></div>
+    </section>
+
+    <section class="box">
+      <h2>Forgot Password (OTP)</h2>
+      <form id="forgotForm">
+        <input name="email" placeholder="Email" type="email"  />
+        <button>Request OTP</button>
+      </form>
+      <div id="forgotResult" class="result"></div>
+    </section>
+
+    <section class="box">
+      <h2>Verify OTP</h2>
+      <form id="verifyForm">
+        <input name="email" placeholder="Email" type="email"  />
+        <input name="otp" placeholder="OTP"  />
+        <button>Verify OTP</button>
+      </form>
+      <div id="verifyResult" class="result"></div>
+    </section>
+
+    <section class="box">
+      <h2>Reset Password (using resetToken)</h2>
+      <form id="resetForm">
+        <input name="resetToken" placeholder="Reset Token"  />
+        <input name="newPassword" placeholder="New Password" type="password"  />
+        <button>Reset Password</button>
+      </form>
+      <div id="resetResult" class="result"></div>
+    </section>
+
+    <section class="box">
+      <h2>Change Password (Authenticated)</h2>
+      <form id="changeForm">
+        <input name="currentPassword" placeholder="Current Password" type="password"  />
+        <input name="newPassword" placeholder="New Password" type="password"  />
+        <button>Change Password</button>
+      </form>
+      <div id="changeResult" class="result"></div>
+    </section>
+
+    <section class="box">
+      <h2>Token</h2>
+      <div>
+        <button id="showToken">Show saved token</button>
+        <button id="clearToken">Clear token</button>
+        <pre id="tokenArea"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
