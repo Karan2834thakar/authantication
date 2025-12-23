@@ -9,12 +9,24 @@ const { handleValidation } = require('../middlewares/validators');
 router.post(
   '/register',
   [
-    body('name').isLength({ min: 2 }).withMessage('Name too short'),
-    body('email').isEmail().withMessage('Invalid email'),
+    body('name')
+      .trim()
+      .notEmpty()
+      .withMessage('Name is required')
+      .isLength({ min: 2 })
+      .withMessage('Name must be at least 2 characters'),
+    body('email')
+      .trim()
+      .normalizeEmail()
+      .isEmail()
+      .withMessage('Invalid email'),
     body('password')
-      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-      .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-\=\[\]{};':"\\|,.<>\/\?]).{8,}$/)
-      .withMessage('Password must contain at least one uppercase letter and one special character')
+      .notEmpty()
+      .withMessage('Password is required').isStrongPassword().withMessage('Password must be at least 8 characters long and include uppercase letters, numbers, and symbols')
+      // .isLength({ min: 8 })
+      // .withMessage('Password must be at least 8 characters')
+      // .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-\=\[\]{};':"\\|,.<>\/\?]).{8,}$/)
+      // .withMessage('Password must contain at least one uppercase letter and one special character')
   ],
   handleValidation,
   authController.register
@@ -22,24 +34,33 @@ router.post(
 
 router.post(
   '/login',
-  [body('email').isEmail(), body('password').exists()],
+  [
+    body('email').trim().normalizeEmail().isEmail().withMessage('Invalid email'),
+    body('password').notEmpty().withMessage('Password is required')
+  ],
   handleValidation,
   authController.login
 );
 
-router.post('/forgot', [body('email').isEmail()], handleValidation, authController.forgotPassword);
-
 router.post(
-  '/verify-otp',
-  [body('email').isEmail(), body('otp').isLength({ min: 6, max: 6 })],
+  '/forgot',
+  [body('email').trim().normalizeEmail().isEmail().withMessage('Invalid email')],
   handleValidation,
-  authController.verifyOTP
+  authController.forgotPassword
 );
+
+// Note: verify-otp endpoint removed; reset now verifies OTP directly using `/reset-password`.
 
 router.post(
   '/reset-password',
   [
-    body('resetToken').exists(),
+    body('email').trim().normalizeEmail().isEmail().withMessage('Invalid email'),
+    body('otp')
+      .trim()
+      .isNumeric()
+      .withMessage('OTP must contain only digits')
+      .isLength({ min: 6, max: 6 })
+      .withMessage('OTP must be 6 digits'),
     body('newPassword')
       .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
       .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-\=\[\]{};':"\\|,.<>\/\?]).{8,}$/)
@@ -53,9 +74,12 @@ router.patch(
   '/change-password',
   auth,
   [
-    body('currentPassword').exists(),
+    body('currentPassword').notEmpty().withMessage('Current password is required'),
     body('newPassword')
-      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+      .notEmpty()
+      .withMessage('New password is required')
+      .isLength({ min: 8 })
+      .withMessage('Password must be at least 8 characters')
       .matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-\=\[\]{};':"\\|,.<>\/\?]).{8,}$/)
       .withMessage('Password must contain at least one uppercase letter and one special character')
   ],

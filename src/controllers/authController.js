@@ -57,38 +57,17 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-exports.verifyOTP = async (req, res, next) => {
+exports.resetPassword = async (req, res, next) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) return res.status(400).json({ message: 'email, otp and newPassword are required' });
+
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid OTP or email' });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     if (!user.otp || user.otp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
     if (user.otpExpires && user.otpExpires < Date.now()) return res.status(400).json({ message: 'OTP expired' });
 
-    user.otpVerified = true;
-    await user.save();
-
-    const resetToken = generateToken({ id: user._id, type: 'reset' }, { expiresIn: '15m' });
-    res.json({ message: 'OTP verified', resetToken });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.resetPassword = async (req, res, next) => {
-  try {
-    const { resetToken, newPassword } = req.body;
-    if (!resetToken) return res.status(400).json({ message: 'Reset token required' });
-
-    const secret = process.env.JWT_SECRET;
-    const payload = require('jsonwebtoken').verify(resetToken, secret);
-    if (!payload || payload.type !== 'reset') return res.status(400).json({ message: 'Invalid reset token' });
-
-    const user = await User.findById(payload.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    // Optionally check otpVerified, but resetToken already proves verification
     const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
     user.password = hashed;
     user.otp = undefined;
@@ -98,7 +77,6 @@ exports.resetPassword = async (req, res, next) => {
 
     res.json({ message: 'Password reset successful' });
   } catch (err) {
-    if (err.name === 'TokenExpiredError') return res.status(400).json({ message: 'Reset token expired' });
     next(err);
   }
 };

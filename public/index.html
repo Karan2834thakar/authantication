@@ -39,20 +39,13 @@
       <div id="forgotResult" class="result"></div>
     </section>
 
-    <section class="box">
-      <h2>Verify OTP</h2>
-      <form id="verifyForm">
-        <input name="email" placeholder="Email" type="email"  />
-        <input name="otp" placeholder="OTP"  />
-        <button>Verify OTP</button>
-      </form>
-      <div id="verifyResult" class="result"></div>
-    </section>
+    <!-- Verify OTP removed: reset-password uses email+otp directly -->
 
     <section class="box">
-      <h2>Reset Password (using resetToken)</h2>
+      <h2>Reset Password (using OTP)</h2>
       <form id="resetForm">
-        <input name="resetToken" placeholder="Reset Token"  />
+        <input name="email" placeholder="Email" type="email"  />
+        <input name="otp" placeholder="OTP"  />
         <input name="newPassword" placeholder="New Password" type="password"  />
         <button>Reset Password</button>
       </form>

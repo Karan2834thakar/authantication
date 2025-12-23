@@ -38,16 +38,7 @@ handleForm('forgotForm', async data => {
   s('forgotResult').textContent = JSON.stringify(res.body);
 });
 
-handleForm('verifyForm', async data => {
-  const res = await jsonFetch(apiBase + '/verify-otp', { method:'POST', body: JSON.stringify(data) });
-  if (res.ok && res.body.resetToken) {
-    s('verifyResult').textContent = 'OTP verified. Save resetToken below.';
-    s('resetForm').reset();
-    s('resetForm').elements['resetToken'].value = res.body.resetToken;
-  } else {
-    s('verifyResult').textContent = JSON.stringify(res.body);
-  }
-});
+// Verify OTP UI removed - reset uses email+otp directly
 
 handleForm('resetForm', async data => {
   const res = await jsonFetch(apiBase + '/reset-password', { method:'POST', body: JSON.stringify(data) });
